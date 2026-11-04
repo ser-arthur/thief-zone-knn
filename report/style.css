@@ -1,0 +1,212 @@
+@font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-latin-400-normal.ttf"); font-weight: 400; font-style: normal; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-latin-400-italic.ttf"); font-weight: 400; font-style: italic; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-latin-600-normal.ttf"); font-weight: 600; font-style: normal; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-latin-600-italic.ttf"); font-weight: 600; font-style: italic; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-latin-700-normal.ttf"); font-weight: 700; font-style: normal; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-greek-400-normal.ttf"); font-weight: 400; font-style: normal; unicode-range: U+0370-03FF; }
+@font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-greek-400-italic.ttf"); font-weight: 400; font-style: italic; unicode-range: U+0370-03FF; }
+@font-face { font-family: "Source Serif 4"; src: url("fonts/source-serif-4-greek-600-normal.ttf"); font-weight: 600; font-style: normal; unicode-range: U+0370-03FF; }
+@font-face { font-family: "Space Grotesk"; src: url("fonts/space-grotesk-latin-400-normal.ttf"); font-weight: 400; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Space Grotesk"; src: url("fonts/space-grotesk-latin-500-normal.ttf"); font-weight: 500; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Space Grotesk"; src: url("fonts/space-grotesk-latin-600-normal.ttf"); font-weight: 600; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Space Grotesk"; src: url("fonts/space-grotesk-latin-700-normal.ttf"); font-weight: 700; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  --ink: #111111;
+  --body: #1c1c1c;
+  --secondary: #4a4a4a;
+  --muted: #8a8a8a;
+  --rule: #cfcfcf;
+  --hairline: #e4e4e4;
+  --serif: "Source Serif 4", Georgia, serif;
+  --sans: "Space Grotesk", "Source Serif 4", "Helvetica Neue", Arial, sans-serif;
+  --text-width: 146mm;
+  --full-width: 174mm;
+}
+
+@page {
+  size: A4;
+  margin: 20mm 18mm 22mm 18mm;
+  @bottom-left {
+    content: "Locating a thief zone with k-nearest neighbours  ·  Kobby Sintim-Arthur";
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 7pt;
+    color: #8a8a8a;
+    vertical-align: top;
+    padding-top: 6mm;
+  }
+  @bottom-right {
+    content: counter(page);
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 7pt;
+    color: #8a8a8a;
+    vertical-align: top;
+    padding-top: 6mm;
+  }
+}
+
+html { background: #ffffff; }
+
+body {
+  margin: 0;
+  color: var(--body);
+  background: #ffffff;
+  font-family: var(--serif);
+  font-size: 10.25pt;
+  line-height: 1.55;
+  font-variant-numeric: lining-nums;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+main { width: var(--full-width); margin: 0 auto; }
+
+main > p, main > ul, main > ol, main > h2, main > h3, .summary, .references, .note {
+  width: var(--text-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+p { margin: 0 0 0.7em; text-align: justify; orphans: 3; widows: 3; }
+
+a { color: inherit; text-decoration: underline; text-decoration-thickness: 0.5pt; text-underline-offset: 2pt; }
+
+em { font-style: italic; }
+sub, sup { line-height: 0; }
+strong { font-weight: 600; }
+
+header.title-block { width: var(--text-width); margin: 4mm auto 8mm; }
+header .kicker {
+  font-family: var(--sans);
+  font-size: 7.5pt;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--secondary);
+  margin: 0 0 5mm;
+}
+header h1 {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 25pt;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0 0 3.5mm;
+}
+header .subtitle {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13pt;
+  line-height: 1.35;
+  color: var(--secondary);
+  margin: 0 0 6mm;
+  text-align: left;
+}
+header .byline {
+  font-family: var(--sans);
+  font-size: 8.5pt;
+  color: var(--secondary);
+  border-top: 0.75pt solid var(--ink);
+  border-bottom: 0.5pt solid var(--rule);
+  padding: 2.2mm 0;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+}
+header .byline .author { color: var(--ink); font-weight: 600; }
+
+.summary { margin-top: 0; margin-bottom: 8mm; }
+.summary p { font-size: 9.75pt; line-height: 1.55; }
+.summary .label, .note .label {
+  font-family: var(--sans);
+  font-size: 7.5pt;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-right: 0.6em;
+}
+
+h2 {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 12.5pt;
+  line-height: 1.25;
+  color: var(--ink);
+  margin-top: 7mm;
+  margin-bottom: 2.5mm;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+h2 .number { color: var(--muted); font-weight: 500; margin-right: 0.45em; }
+
+main > p > strong:first-child { font-family: var(--sans); font-size: 9.5pt; font-weight: 600; color: var(--ink); }
+
+ul { padding-left: 0; margin-top: 0; margin-bottom: 0.9em; list-style: none; }
+ul li { position: relative; padding-left: 5mm; margin-bottom: 0.35em; text-align: justify; }
+ul li::before { content: ""; position: absolute; left: 0.8mm; top: 0.6em; width: 1.3mm; height: 1.3mm; border-radius: 50%; background: var(--ink); }
+
+figure { margin: 6mm 0 6mm; break-inside: avoid; page-break-inside: avoid; }
+figure img { display: block; width: 100%; height: auto; }
+figure.chart img { width: var(--full-width); }
+figcaption {
+  font-family: var(--sans);
+  font-size: 8.25pt;
+  line-height: 1.45;
+  color: var(--secondary);
+  margin: 2.5mm auto 0;
+  width: var(--text-width);
+  text-align: left;
+}
+figcaption strong { color: var(--ink); font-weight: 600; }
+figure.table figcaption { margin: 0 0 2mm; width: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 8pt;
+  font-variant-numeric: tabular-nums lining-nums;
+  border-top: 0.75pt solid var(--ink);
+  border-bottom: 0.75pt solid var(--ink);
+}
+thead th {
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+  padding: 1.6mm 2mm 1.4mm;
+  border-bottom: 0.5pt solid var(--ink);
+  vertical-align: bottom;
+}
+tbody td { padding: 1.1mm 2mm; border-bottom: 0.4pt solid var(--hairline); color: var(--body); }
+tbody tr:last-child td { border-bottom: none; }
+td:first-child, th:first-child { padding-left: 0; }
+td:last-child, th:last-child { padding-right: 0; }
+td.num, th.num { text-align: right; }
+tbody td strong { font-weight: 600; color: var(--ink); }
+
+figure.table.narrow table { width: 100mm; }
+
+hr { display: none; }
+
+.note {
+  font-size: 9pt;
+  color: var(--secondary);
+  border-top: 0.5pt solid var(--rule);
+  padding-top: 3mm;
+  margin-top: 8mm;
+}
+.note p { font-size: 9pt; }
+
+.references h2 { margin-top: 6mm; }
+.references p {
+  font-size: 8.5pt;
+  line-height: 1.45;
+  padding-left: 6mm;
+  text-indent: -6mm;
+  text-align: left;
+  margin-bottom: 0.55em;
+  hyphens: manual;
+}
