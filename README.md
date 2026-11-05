@@ -42,6 +42,7 @@ A thief zone is a thin, highly permeable layer that takes most of the water inje
     ├── article.md              Article source
     ├── build_report.py         Rebuilds the figures and the PDF from article.md
     ├── style.css, fonts/       Layout and fonts (Source Serif 4 and Space Grotesk, SIL OFL)
+    ├── katex/                  KaTeX 0.16.11 for typesetting the equations (MIT)
     └── figures/                Article figures
 ```
 

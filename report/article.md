@@ -55,13 +55,29 @@ From the properties given, its arithmetic permeability is about twelve times tha
 
 The rows in Table 1 sit at different levels of a hierarchy. Devonian is a formation. Upper and Lower Devonian are units within it, and Devonian 3.3, 3.2 and 3.1 are zones within the Upper Devonian. If the parent rows are averages of their children, then combining the children in the same way should reproduce the parents.
 
-Each parent value would then be a weighted average of its children, Σ<i>w</i><sub><i>i</i></sub><i>x</i><sub><i>i</i></sub> / Σ<i>w</i><sub><i>i</i></sub>, where <i>x</i><sub><i>i</i></sub> is a child's value and <i>w</i><sub><i>i</i></sub> its weight, so each zone counts in proportion to how much of it there is. Gross thickness is base minus top, net thickness is gross thickness times N/G, and pore volume is net thickness times porosity. Net-to-gross is weighted by gross thickness, which makes it total net over total gross. Porosity and the permeability means are averaged over net rock, so they are weighted by net thickness. Water saturation is a fraction of the pore space, so it is weighted by pore volume. The geometric and harmonic means use the same weights in their own forms.
+Each parent value would then be a weighted average of its children, with each zone counting in proportion to how much of it there is:
+
+```math
+\bar{x} = \frac{\sum_i w_i x_i}{\sum_i w_i}, \qquad
+\bar{x}_{\mathrm{geo}} = \exp\!\left(\frac{\sum_i w_i \ln x_i}{\sum_i w_i}\right), \qquad
+\bar{x}_{\mathrm{harm}} = \frac{\sum_i w_i}{\sum_i w_i / x_i},
+\tag{1}
+```
+
+where $x_i$ is the value in child zone $i$, $w_i$ is its weight and $\bar{x}$ is the parent value. The first form applies to N/G, porosity, water saturation and the arithmetic permeability, and the other two to the geometric and harmonic permeability means. Gross thickness $h$ is base minus top, net thickness is $h_{\mathrm{net}} = h \times \mathrm{N/G}$, and pore volume is $h_{\mathrm{net}} \varphi$, with porosity $\varphi$ as a fraction. Net-to-gross is weighted by gross thickness, which makes it total net over total gross. Porosity and the permeability means are averaged over net rock, so they are weighted by net thickness. Water saturation is a fraction of the pore space, so it is weighted by pore volume.
 
 For the Upper Devonian it works. Its three zones cover its full depth range, from 3435.0 to 3454.7 m, and combine to 65.3 mD against the 65 mD reported, with every other column matching to the precision of the table.
 
 The Devonian row does not. An average can never be larger than the largest of its parts, yet the Devonian's arithmetic permeability, 263 mD, is higher than both of its units (65 and 4 mD) and every zone listed under it (108 mD at most). Combining the Upper and Lower Devonian gives only 31 mD. Something more permeable is missing from the table, and the depths show where. The Upper Devonian ends at 3454.7 m and the Lower Devonian begins at 3463.8 m, so 9.1 m of the Devonian has no row of its own.
 
-Subtracting the two units from the Devonian row recovers the properties of that missing interval (Table 3). Averages cannot be subtracted directly, so each is first turned back into a total by multiplying it by its weight: for permeability, permeability times net thickness. The units' totals are taken from the Devonian's, and what remains is divided by the missing interval's own net thickness. The result matches the suspect zone's properties to within rounding. The check also works in reverse: putting the suspect zone into the gap brings the Devonian row back, at 263 mD arithmetic and close on the geometric and harmonic means (9.4 and 0.56 mD against 10 and 0.5), which played no part in the calculation.
+Subtracting the two units from the Devonian row recovers the properties of that missing interval (Table 3). Averages cannot be subtracted directly, so each is first turned back into a total by multiplying it by its weight. The units' totals are taken from the Devonian's, and what remains is divided by the missing interval's own weight:
+
+```math
+x_{\mathrm{gap}} = \frac{W_{\mathrm{Dev}}\,x_{\mathrm{Dev}} - W_{\mathrm{U}}\,x_{\mathrm{U}} - W_{\mathrm{L}}\,x_{\mathrm{L}}}{W_{\mathrm{Dev}} - W_{\mathrm{U}} - W_{\mathrm{L}}},
+\tag{2}
+```
+
+where $x_{\mathrm{gap}}$ is the missing interval's value, and $x$ and $W$ are the reported value and total weight of the Devonian (Dev), the Upper Devonian (U) and the Lower Devonian (L). $W$ is gross thickness for N/G, net thickness for porosity and arithmetic permeability, and pore volume for water saturation. The result matches the suspect zone's properties to within rounding. The check also works in reverse: putting the suspect zone into the gap brings the Devonian row back, at 263 mD arithmetic and close on the geometric and harmonic means (9.4 and 0.56 mD against 10 and 0.5), which played no part in the calculation.
 
 **Table 3.** The interval missing from the table, back-calculated from the Devonian row, against the properties given for the suspect zone.
 
@@ -92,13 +108,36 @@ kNN classifies a new example by a vote among the *k* most similar examples it ha
 
 **Test point.** The suspect zone's eight properties.
 
-**Features.** To see what each type of property says, the model is run on three views: stratigraphic (top and base), petrophysical (N/G, PHIF, SW and the three permeability means), and all eight together. Permeability is converted to base-10 logarithms. It spans more than three orders of magnitude, from 0.3 to 1280 mD, and on a linear scale the suspect zone's value would swamp every other property. All features are standardised using statistics from the training rows only, so the test point has no influence on the scaling.
+**Features.** To see what each type of property says, the model is run on three views: stratigraphic (top and base), petrophysical (N/G, PHIF, SW and the three permeability means), and all eight together. Permeability is converted to base-10 logarithms. It spans more than three orders of magnitude, from 0.3 to 1280 mD, and on a linear scale the suspect zone's value would swamp every other property. All features are then standardised using statistics from the training rows only:
+
+```math
+z_{ij} = \frac{x_{ij} - \mu_j}{\sigma_j}, \qquad
+\mu_j = \frac{1}{n}\sum_{i=1}^{n} x_{ij}, \qquad
+\sigma_j = \sqrt{\frac{1}{n}\sum_{i=1}^{n} \left(x_{ij} - \mu_j\right)^2},
+\tag{3}
+```
+
+where $x_{ij}$ is feature $j$ of training zone $i$, $z_{ij}$ is its standardised value, and $\mu_j$ and $\sigma_j$ are the mean and population standard deviation of that feature over the $n$ training zones ($n = 7$, or 8 with the Zechstein in the depth-only view). The suspect zone is scaled with the same $\mu_j$ and $\sigma_j$, so it has no influence on the scaling.
 
 ## 5. Where the zone sits
 
-For each view, kNN first puts the properties on a common scale, converting each to standard deviations from the training zones' mean. It then measures the straight-line distance from the suspect zone to every training zone, ranks the zones by that distance, and lets the *k* nearest vote. The formation with the most votes is the prediction. Table 4 lists the distances.
+For each view, kNN first puts the properties on a common scale with equation (3). It then measures the straight-line distance from the suspect zone to every training zone:
 
-In every view the three nearest zones are all Devonian, so the vote is unanimous at *k* = 1 and *k* = 3. At *k* = 5 it is four Devonian zones to one: the fifth nearest is the Zechstein by depth and the Rotliegend in the other two views. All three views therefore place the suspect zone in the Devonian.
+```math
+d_i = \sqrt{\sum_{j=1}^{p} \left(z_{\mathrm{s}j} - z_{ij}\right)^2},
+\tag{4}
+```
+
+where $d_i$ is the distance to training zone $i$, $z_{\mathrm{s}j}$ is the suspect zone's standardised value of feature $j$, and $p$ is the number of features in the view: 2, 6 or 8. The zones are ranked by $d_i$, and the $k$ nearest vote with equal weight:
+
+```math
+y_{\mathrm{s}} = \operatorname*{arg\,max}_{c} \sum_{i \in N_k} \mathbf{1}(y_i = c),
+\tag{5}
+```
+
+where $N_k$ is the set of the $k$ nearest training zones, $y_i$ is the formation of zone $i$, $\mathbf{1}(y_i = c)$ is 1 if zone $i$ belongs to formation $c$ and 0 otherwise, and $y_{\mathrm{s}}$, the formation with the most votes, is the prediction for the suspect zone. Table 4 lists the distances.
+
+In every view the three nearest zones are all Devonian, so the vote is unanimous at *k* = 1 and *k* = 3. At *k* = 5 it is four Devonian zones to one: the fifth nearest is the Zechstein by depth and the Rotliegend in the other two views. All three views therefore place the suspect zone in the Devonian.
 
 They agree for different reasons. By depth, the nearest zone is Devonian 3.1, directly above the gap, followed by 3.2, 3.3 and the Lower Devonian directly below it. Both zones that bound the gap are among the four nearest. In the petrophysical view, the nearest zone is Devonian 3.3, the best rock in the Upper Devonian, followed by 3.2 and 3.1. Even with depth hidden, the suspect zone looks like Upper Devonian reservoir rock. With all eight properties, the neighbours match the petrophysical view. After scaling, the rock and fluid properties vary much more between the Devonian zones than depth does, so they dominate the distances.
 
@@ -119,7 +158,14 @@ They agree for different reasons. By depth, the nearest zone is Devonian 3.1, di
 
 **Figure 2.** Porosity against arithmetic permeability for each training zone and the suspect zone. The ringed zones are the suspect zone's three nearest neighbours, found using all six rock and fluid properties, of which this plot shows two. The grey lines join points of equal pore-throat radius, r35, and divide the plot into the port-size classes of Martin et al. (1997), from microport (narrowest throats) to megaport (widest).
 
-Figure 2 also shows the limit of the method. The suspect zone has higher porosity and permeability than every training zone. Permeability depends less on how much pore space a rock has than on the size of the throats that connect its pores. The Winland equation estimates that size from porosity and permeability as r35, the pore-throat radius at which mercury fills 35% of the pore space in a capillary-pressure test (Kolodzie, 1980; Pittman, 1992). The suspect zone's r35 is about 28 µm, which makes it a megaport rock and the only one in the well, while the best training zone, Devonian 3.3, is a macroport at 7.2 µm. A nearest-neighbour model can only answer with classes it has seen. It can say the zone belongs to the Devonian, but it could never say the rock is unlike anything else in the well. That takes the flow check in Section 7.
+Figure 2 also shows the limit of the method. The suspect zone has higher porosity and permeability than every training zone. Permeability depends less on how much pore space a rock has than on the size of the throats that connect its pores. The Winland equation estimates that size from porosity and permeability (Kolodzie, 1980; Pittman, 1992):
+
+```math
+\log_{10} r_{35} = 0.732 + 0.588 \log_{10} k - 0.864 \log_{10} \varphi,
+\tag{6}
+```
+
+where $r_{35}$ is the pore-throat radius in micrometres at which mercury fills 35% of the pore space in a capillary-pressure test, $k$ is permeability in millidarcies and $\varphi$ is porosity in per cent. The equation was fitted to core air permeability; here it is applied to the arithmetic KLOGH and to PHIF expressed in per cent. The suspect zone's $r_{35}$ is about 28 µm, which makes it a megaport rock and the only one in the well, while the best training zone, Devonian 3.3, is a macroport at 7.2 µm. A nearest-neighbour model can only answer with classes it has seen. It can say the zone belongs to the Devonian, but it could never say the rock is unlike anything else in the well. That takes the flow check in Section 7.
 
 ## 6. Which properties point to it
 
@@ -141,7 +187,21 @@ No single property decides the result. Removing any one of the eight still gives
 
 ## 7. Does it behave like a thief zone?
 
-The problem takes the suspicion as given, but it is worth checking. With the suspect zone placed in its gap, the Devonian becomes five layers stacked one above the other. Each layer's flow capacity is its permeability multiplied by its net thickness (*kh*), and its storage capacity is its porosity multiplied by its net thickness (*φh*). Table 5 shows each layer's share of the Devonian total.
+The problem takes the suspicion as given, but it is worth checking. With the suspect zone placed in its gap, the Devonian becomes five layers stacked one above the other. Each layer's flow capacity is its permeability multiplied by its net thickness, and its storage capacity is its porosity multiplied by its net thickness:
+
+```math
+(kh)_i = k_i\,h_{\mathrm{net},i}, \qquad (\varphi h)_i = \varphi_i\,h_{\mathrm{net},i},
+\tag{7}
+```
+
+where $k_i$ is the arithmetic permeability of layer $i$ in millidarcies, $\varphi_i$ is its porosity as a fraction and $h_{\mathrm{net},i}$ is its net thickness in metres. Each layer's share of the Devonian total is
+
+```math
+F_i = \frac{(kh)_i}{\sum_j (kh)_j}, \qquad C_i = \frac{(\varphi h)_i}{\sum_j (\varphi h)_j},
+\tag{8}
+```
+
+where $F_i$ is its share of flow capacity, $C_i$ its share of storage capacity, and the sums run over the five layers. Table 5 lists them.
 
 **Table 5.** Share of the Devonian's net thickness, storage capacity and flow capacity by layer.
 
@@ -153,7 +213,14 @@ The problem takes the suspicion as given, but it is worth checking. With the sus
 | **Suspect zone** | **8.4** | **1280** | **18.6%** | **21.6%** | **90.4%** |
 | Lower Devonian | 20.6 | 4 | 45.5% | 42.2% | 0.7% |
 
-The suspect zone holds 19% of the Devonian's net thickness and 22% of its storage, yet 90% of its flow capacity. If the layers flow side by side without crossflow and the fluids have similar mobilities, injected water divides between them in proportion to *kh*. About nine barrels in every ten would go into this 9 m interval. A flood front in a layer advances at a speed proportional to permeability over porosity, so in the suspect zone it would move about ten times faster than in Devonian 3.3, the next best layer. Water would break through along it long before the rest of the Devonian was swept.
+The suspect zone holds 19% of the Devonian's net thickness and 22% of its storage, yet 90% of its flow capacity. If the layers flow side by side without crossflow and the fluids have similar mobilities, injected water divides between them in proportion to *kh*. About nine barrels in every ten would go into this 9 m interval. A flood front advances through each layer at a speed
+
+```math
+v_i \propto \frac{k_i}{\varphi_i},
+\tag{9}
+```
+
+where $v_i$ is the front speed in layer $i$. This assumes every layer sees the same pressure gradient, the same fluids and the same change in saturation across the front: Darcy's law makes the flow rate per unit area proportional to $k_i$, and dividing by $\varphi_i$ gives the speed through the pore space. On this basis the front in the suspect zone would move about ten times faster than in Devonian 3.3, the next best layer. Water would break through along it long before the rest of the Devonian was swept.
 
 ![Figure 4](figures/lorenz-plot.png)
 

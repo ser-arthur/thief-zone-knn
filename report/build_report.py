@@ -8,6 +8,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import html
 import re
 import sys
 import tempfile
@@ -38,6 +39,21 @@ FIGURES = {
 THEMES = {"accent": "report", "mono": "report-mono"}
 
 TITLE = "Locating a thief zone with k-nearest neighbours"
+
+MATH_BLOCK = re.compile(r"^```math\n(.*?)\n```$", re.M | re.S)
+MATH_INLINE = re.compile(r"(?<![\\$])\$(?=\S)(.+?)(?<=\S)\$")
+PLACEHOLDER = re.compile(r"MATH(BLOCK|INLINE)(\d{3})Z")
+
+RENDER_MATH = """
+window.mathErrors = [];
+for (const el of document.querySelectorAll("[data-tex]")) {
+  try {
+    katex.render(el.dataset.tex, el, {displayMode: el.tagName === "DIV", throwOnError: true});
+  } catch (error) {
+    window.mathErrors.push(String(error));
+  }
+}
+"""
 
 
 def register_fonts() -> None:
@@ -76,9 +92,42 @@ def is_number(text: str) -> bool:
     return True
 
 
+def protect_math(text: str) -> tuple[str, list[str]]:
+    """Swap LaTeX for placeholders so Markdown leaves it untouched."""
+    formulas: list[str] = []
+
+    def stash(kind: str, tex: str) -> str:
+        formulas.append(tex.strip())
+        return f"MATH{kind}{len(formulas) - 1:03d}Z"
+
+    text = MATH_BLOCK.sub(lambda m: "\n\n" + stash("BLOCK", m.group(1)) + "\n\n", text)
+    text = MATH_INLINE.sub(lambda m: stash("INLINE", m.group(1)), text)
+    return text, formulas
+
+
+def restore_math(soup: BeautifulSoup, formulas: list[str]) -> None:
+    for paragraph in soup.find_all("p"):
+        match = PLACEHOLDER.fullmatch(paragraph.get_text().strip())
+        if match and match.group(1) == "BLOCK":
+            block = soup.new_tag("div", attrs={"class": "equation", "data-tex": formulas[int(match.group(2))]})
+            paragraph.replace_with(block)
+    for node in soup.find_all(string=PLACEHOLDER):
+        pieces = []
+        position = 0
+        for match in PLACEHOLDER.finditer(node):
+            pieces.append(node[position:match.start()])
+            pieces.append(soup.new_tag("span", attrs={"class": "math", "data-tex": formulas[int(match.group(2))]}))
+            position = match.end()
+        pieces.append(node[position:])
+        for piece in pieces:
+            node.insert_before(piece)
+        node.extract()
+
+
 def build_html(source: Path, figure_dir: Path) -> str:
-    html = markdown.markdown(source.read_text(encoding="utf-8"), extensions=["tables"])
-    soup = BeautifulSoup(html, "html.parser")
+    text, formulas = protect_math(source.read_text(encoding="utf-8"))
+    soup = BeautifulSoup(markdown.markdown(text, extensions=["tables"]), "html.parser")
+    restore_math(soup, formulas)
 
     for rule in soup.find_all("hr"):
         rule.decompose()
@@ -181,11 +230,13 @@ def build_html(source: Path, figure_dir: Path) -> str:
         wrapper.append(node.extract())
         node = following
 
-    style = (HERE / "style.css").as_uri()
     return (
         "<!doctype html><html lang='en-GB'><head><meta charset='utf-8'>"
-        f"<base href='{HERE.as_uri()}/'><title>{TITLE}</title>"
-        f"<link rel='stylesheet' href='{style}'></head><body><main>{soup}</main></body></html>"
+        f"<base href='{HERE.as_uri()}/'><title>{html.escape(TITLE)}</title>"
+        "<link rel='stylesheet' href='katex/katex.min.css'>"
+        "<link rel='stylesheet' href='style.css'>"
+        "<script src='katex/katex.min.js'></script></head>"
+        f"<body><main>{soup}</main><script>{RENDER_MATH}</script></body></html>"
     )
 
 
@@ -198,6 +249,9 @@ def render_pdf(html: str, output: Path) -> None:
             page = browser.new_page()
             page.goto(page_path.as_uri(), wait_until="networkidle")
             page.evaluate("document.fonts.ready")
+            errors = page.evaluate("window.mathErrors")
+            if errors:
+                raise SystemExit("Equation errors:\n" + "\n".join(errors))
             page.pdf(path=str(output), print_background=True, prefer_css_page_size=True)
             browser.close()
 

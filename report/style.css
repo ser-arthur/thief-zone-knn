@@ -61,7 +61,7 @@ body {
 
 main { width: var(--full-width); margin: 0 auto; }
 
-main > p, main > ul, main > ol, main > h2, main > h3, .summary, .references, .note {
+main > p, main > ul, main > ol, main > h2, main > h3, .summary, .references, .note, .equation {
   width: var(--text-width);
   margin-left: auto;
   margin-right: auto;
@@ -185,11 +185,19 @@ tbody tr:last-child td { border-bottom: none; }
 td:first-child, th:first-child { padding-left: 0; }
 td:last-child, th:last-child { padding-right: 0; }
 td.num, th.num { text-align: right; }
+tbody td:first-child { white-space: nowrap; }
 tbody td strong { font-weight: 600; color: var(--ink); }
 
 figure.table.narrow table { width: 100mm; }
 
 hr { display: none; }
+
+.equation { margin: 3.2mm auto 3.4mm; break-inside: avoid; break-before: avoid; break-after: avoid; page-break-inside: avoid; page-break-before: avoid; page-break-after: avoid; }
+span.math .katex { white-space: nowrap; }
+.equation .katex-display { margin: 0; }
+.katex { font-family: "Source Serif 4", KaTeX_Main, serif; font-size: 1.05em; }
+.katex .mathnormal, .katex .mathit { font-family: "Source Serif 4", KaTeX_Math, serif; font-style: italic; }
+.katex .mathbf { font-family: "Source Serif 4", KaTeX_Main, serif; font-weight: 700; }
 
 .note {
   font-size: 9pt;
